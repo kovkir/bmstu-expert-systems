@@ -33,8 +33,9 @@ class Search:
         count_rules = 0
 
         for rule in self.rule_arr:
-            print(f'\nТекущее правило: {rule.number}')
             if not self.solution_flag:
+                print(f'\nТекущее правило: {rule.number}')
+                
                 if rule.label != Label.OPEN:
                     print(f'Правило уже было доказано\n\n{'—' * 64}')
                     continue
@@ -55,7 +56,7 @@ class Search:
                 else:
                     print('Не все входные вершины правила являются закрытими')
             else:
-                print(f'Решение было найдено ✅\n\n{'—' * 64}')
+                print(f'\nРешение было найдено ✅\n\n{'—' * 64}')
                 break
 
             print('Список доказанных правил: ', end='')
@@ -65,7 +66,6 @@ class Search:
             print('\n' + '—' * 64)
 
         print(f'\t\tКол-во доказанных правил при обходе: {count_rules}\n{'—' * 64}')
-
         return count_rules
 
     def is_close_nodes_cover(self, in_node_arr: list[Node]):
