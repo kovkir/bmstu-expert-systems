@@ -49,7 +49,7 @@ class Search:
 
                     if rule.out_node == self.goal_node:
                         self.solution_flag = True
-                        print('Выходная вершина правила является искомой ✅')
+                        print('Выходная вершина правила является целевой ✅')
 
                     count_rules += 1
                 else:
