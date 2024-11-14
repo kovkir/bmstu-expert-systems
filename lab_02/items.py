@@ -31,4 +31,4 @@ class Rule:
         self.number = number
         self.out_node = out_node
         self.node_arr = node_arr  # массив входных вершин, связанных связкой И
-        self.label = label  # открытое/закрытое/запрещенное
+        self.label = label  # открытое/закрытое

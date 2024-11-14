@@ -9,7 +9,7 @@ NODE_6 = Node(6)
 NODE_7 = Node(7)
 NODE_8 = Node(8)
 NODE_9 = Node(9)
-
+NODE_9 = Node(10)
 NODE_11 = Node(11)
 NODE_12 = Node(12)
 NODE_13 = Node(13)
@@ -23,12 +23,18 @@ NODE_21 = Node(21)
 NODE_22 = Node(22)
 NODE_23 = Node(23)
 NODE_24 = Node(24)
+NODE_24 = Node(25)
 
-NODE_31 = Node(31)
-NODE_33 = Node(33)
 
 RULES = [
     Rule(101, NODE_3,  [NODE_1,  NODE_2]),
+    Rule(101, NODE_3,  [NODE_3,  NODE_4]),
+    Rule(101, NODE_3,  [NODE_5,  NODE_6]),
+    Rule(101, NODE_3,  [NODE_1,  NODE_2]),
+    Rule(101, NODE_3,  [NODE_1,  NODE_2]),
+    Rule(101, NODE_3,  [NODE_1,  NODE_2]),
+
+
     Rule(102, NODE_7,  [NODE_3,  NODE_2, NODE_4]),
     Rule(103, NODE_4,  [NODE_5,  NODE_6]),
     Rule(104, NODE_3,  [NODE_8,  NODE_31]),

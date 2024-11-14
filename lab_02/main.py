@@ -13,17 +13,30 @@ def buildGraph(
     rules: list[Rule],
     goal_node: Node, 
     in_node_arr: list[Node],
+    graph_name: str,
+    close_node_lst: list[Node] | None = None,
+    close_rule_lst: list[Rule] | None = None,
 ) -> None:
     dot = graphviz.Digraph(
-        comment='lab_02'
+        comment=f'lab_02_{graph_name}'
     )
     nodes = []
     for rule in rules:
         nodes.append(str(rule.out_node.number))
-        dot.node(
-            name=str(rule.number),
-            shape="rectangle",
-        )
+        if close_rule_lst and rule in close_rule_lst:
+            dot.node(
+                name=str(rule.number),
+                shape="rectangle",
+                color="purple4", 
+                style="filled", 
+                fillcolor="plum",
+            )
+        else:
+            dot.node(
+                name=str(rule.number),
+                shape="rectangle",
+            )
+
         dot.edge(
             tail_name=str(rule.out_node.number), 
             head_name=str(rule.number),
@@ -53,10 +66,18 @@ def buildGraph(
                 style="filled", 
                 fillcolor="lightblue",
             )
+        elif close_node_lst and node in \
+            [str(close_node.number) for close_node in close_node_lst]:
+            dot.node(
+                name=node, 
+                color="purple4", 
+                style="filled", 
+                fillcolor="plum",
+            )
         else:
             dot.node(node)
 
-    dot.render('./docs/graph.gv').replace('\\', '/')
+    dot.render(f'./docs/{graph_name}.gv').replace('\\', '/')
 
 
 def main(goal_node: Node, in_node_arr: list[Node]):
@@ -64,10 +85,20 @@ def main(goal_node: Node, in_node_arr: list[Node]):
         rules=RULES,
         goal_node=goal_node,
         in_node_arr=in_node_arr,
+        graph_name="initial_graph",
     )
-    Search(RULES).run(
-        goal_node=goal_node, 
+    search = Search(RULES)
+    search.run(
+        goal_node=goal_node,
+        in_node_arr=in_node_arr.copy(),
+    )
+    buildGraph(
+        rules=RULES,
+        goal_node=goal_node,
         in_node_arr=in_node_arr,
+        close_node_lst=search.close_node_lst,
+        close_rule_lst=search.close_rule_lst,
+        graph_name="final_graph",
     )
 
 

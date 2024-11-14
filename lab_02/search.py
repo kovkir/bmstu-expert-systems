@@ -1,5 +1,4 @@
 from items import Rule, Node, Label
-from stack import Stack
 
 
 class Search:
@@ -8,7 +7,6 @@ class Search:
     """
     def __init__(self, rule_arr: list[Rule]):
         self.rule_arr = rule_arr  # база знаний
-        self.open_node_stack = Stack()
         self.open_rule_lst = []
         self.close_node_lst = []
         self.close_rule_lst = []
@@ -19,7 +17,6 @@ class Search:
 
     def run(self, goal_node: Node, in_node_arr: list[Node]):
         self.goal_node = goal_node
-        self.open_node_stack.push(goal_node)
         self.close_node_lst = in_node_arr
 
         while not self.solution_flag and not self.no_solution_flag:
@@ -39,11 +36,11 @@ class Search:
             print(f'\nТекущее правило: {rule.number}')
             if not self.solution_flag:
                 if rule.label != Label.OPEN:
-                    print(f'Правило уже было обработано\n\n{'—' * 64}')
+                    print(f'Правило уже было доказано\n\n{'—' * 64}')
                     continue
 
                 if self.is_close_nodes_cover(rule.node_arr):
-                    print('Все входные узлы правила являются закрытими')
+                    print('Все входные вершины правила являются закрытими')
 
                     rule.label = Label.CLOSE
                     self.close_rule_lst.append(rule)
@@ -52,22 +49,22 @@ class Search:
 
                     if rule.out_node == self.goal_node:
                         self.solution_flag = True
-                        print('Выходной узел правила является искомым ✅')
+                        print('Выходная вершина правила является искомой ✅')
 
                     count_rules += 1
                 else:
-                    print('Не все входные узлы правила являются закрытими')
+                    print('Не все входные вершины правила являются закрытими')
             else:
                 print(f'Решение было найдено ✅\n\n{'—' * 64}')
                 break
 
-            print('Список закрытых правил: ', end='')
+            print('Список доказанных правил: ', end='')
             self.print_rules(self.close_rule_lst)
-            print(f'Список закрытых узлов: ', end='')
+            print(f'Список закрытых вершин: ', end='')
             self.print_nodes(self.close_node_lst)
             print('\n' + '—' * 64)
 
-        print(f'\t\tКол-во доказанных правил: {count_rules}\n{'—' * 64}')
+        print(f'\t\tКол-во доказанных правил при обходе: {count_rules}\n{'—' * 64}')
 
         return count_rules
 
