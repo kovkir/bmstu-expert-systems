@@ -7,7 +7,6 @@ class Search:
     """
     def __init__(self, rule_arr: list[Rule]):
         self.rule_arr = rule_arr  # база знаний
-        self.open_rule_lst = []
         self.close_node_lst = []
         self.close_rule_lst = []
 
@@ -61,7 +60,7 @@ class Search:
 
             print('Список доказанных правил: ', end='')
             self.print_rules(self.close_rule_lst)
-            print(f'Список закрытых вершин: ', end='')
+            print('Список закрытых вершин: ', end='')
             self.print_nodes(self.close_node_lst)
             print('\n' + '—' * 64)
 
