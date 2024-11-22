@@ -1,4 +1,4 @@
-// lab_02_initial_graph
+// lab_03_initial_graph
 digraph {
 	101 [shape=rectangle]
 	5 -> 101 [arrowhead=none constraint=true]

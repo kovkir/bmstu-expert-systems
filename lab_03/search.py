@@ -28,13 +28,14 @@ class Search:
             rule_cnt = self.child_search()
 
             if self.solution_flg:
-                print(f'\nРешение было найдено ✅\n')
+                print('\nРешение было найдено ✅\n')
                 return
 
             if rule_cnt == 0 and self.open_node_st.length() < 2:
                 self.no_solution_flg = True
                 print("\nРешение не было найдено ❌\n")
             elif rule_cnt == 0:
+                print("\nНе было найдено правила, выходной вершиной которого является текущая вершина")
                 print("\nВозвращение назад:")
                 self.backtracking()
 
@@ -51,14 +52,14 @@ class Search:
                 continue
 
             if rule.out_node == current_node:
-                print(f'Выходная вершина правила равна текущей вершине')
+                print('Выходная вершина правила равна текущей вершине')
 
                 rule.label = Label.VIEWED
                 self.open_rule_lst.append(rule)
 
                 is_new_goal_added = self.add_new_goal(rule.node_arr)
                 if not is_new_goal_added:
-                    print(f'Все входные вершина правила являются закрытыми')
+                    print('Все входные вершины правила являются закрытыми')
                     print('\nМаркировка:')
                     self.label()
 
@@ -67,12 +68,9 @@ class Search:
                 break
 
             if self.is_prohibited_node_exist(rule.node_arr):
-                print(f'Среди входных вершин правила есть запрещенная')
+                print('Среди входных вершин правила есть запрещенная')
                 self.prohibited_rule_lst.append(rule)
                 rule.label = Label.FORBIDDEN
-
-                self.print_info()
-                continue
 
             self.print_info()
 

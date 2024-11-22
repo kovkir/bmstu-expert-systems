@@ -1,4 +1,4 @@
-// lab_02_final_graph
+// lab_03_final_graph
 digraph {
 	101 [color=purple4 fillcolor=plum shape=rectangle style=filled]
 	5 -> 101 [arrowhead=none constraint=true]

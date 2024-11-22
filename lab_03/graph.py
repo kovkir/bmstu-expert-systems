@@ -15,7 +15,7 @@ def buildGraph(
     prohibited_rule_lst: list[Rule] | None = None,
 ) -> None:
     dot = graphviz.Digraph(
-        comment=f'lab_02_{graph_name}'
+        comment=f'lab_03_{graph_name}'
     )
     nodes = []
     for rule in rules:
