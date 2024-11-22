@@ -1,6 +1,5 @@
 import graphviz
 
-from data import *
 from items import Rule, Node
 
 
