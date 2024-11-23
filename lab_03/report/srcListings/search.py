@@ -28,12 +28,12 @@ class Search:
             rule_cnt = self.child_search()
 
             if self.solution_flg:
-                print('\nРешение было найдено ✅\n')
+                print('\nРешение было найдено\n')
                 return
 
             if rule_cnt == 0 and self.open_node_st.length() < 2:
                 self.no_solution_flg = True
-                print("\nРешение не было найдено ❌\n")
+                print("\nРешение не было найдено\n")
             elif rule_cnt == 0:
                 print("\nНе было найдено правила, выходной вершиной которого является текущая вершина")
                 print("\nВозвращение назад:")
