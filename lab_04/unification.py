@@ -9,25 +9,28 @@ class Unification:
         right: Disjunct
     ) -> tuple[Disjunct, dict[str, Term]] | None:
         unificationCount = 0
-        result = left.copy().args + right.copy().args
         globalSubstitutions = {}
+        
+        leftAtoms = left.copy().args
+        rightAtoms = right.copy().args
 
         while True:
             localUnificationCount = 0
 
-            for i, leftAtom in enumerate(result):
-                for rightAtom in result[i + 1:]:
+            for leftAtom in leftAtoms:
+                for rightAtom in rightAtoms:
                     if leftAtom.name == rightAtom.name:
                         if leftAtom.isPositive == rightAtom.isPositive:
                             cls.__deleteIdenticalAtom(
                                 leftAtom=leftAtom,
                                 rightAtom=rightAtom,
-                                result=result,
+                                atomList=rightAtoms,
                             )
                         elif cls.__tryToUnificateAtoms(
                             leftAtom=leftAtom,
                             rightAtom=rightAtom,
-                            result=result,
+                            leftAtoms=leftAtoms,
+                            rightAtoms=rightAtoms,
                             globalSubstitutions=globalSubstitutions,
                         ):
                             localUnificationCount += 1
@@ -41,14 +44,15 @@ class Unification:
         if unificationCount == 0:
             return None
 
-        return Disjunct(result), globalSubstitutions
+        return Disjunct(leftAtoms + rightAtoms), globalSubstitutions
 
     @classmethod
     def __tryToUnificateAtoms(
         cls, 
         leftAtom: Atom,
         rightAtom: Atom,
-        result: list[Atom],
+        leftAtoms: list[Atom],
+        rightAtoms: list[Atom],
         globalSubstitutions: dict[str, Term],
     ) -> bool:
         substitutions = cls.__unificateAtoms(
@@ -62,15 +66,17 @@ class Unification:
         if substitutions == None:
             return False
 
-        result.remove(leftAtom)
-        result.remove(rightAtom)
+        # удаление контрарных атомов
+        leftAtoms.remove(leftAtom)
+        rightAtoms.remove(rightAtom)
         
         for sub in substitutions:
             globalSubstitutions[sub] = substitutions[sub]
 
-        cls.__applySubstitution(result, substitutions)
+        cls.__applySubstitution(leftAtoms, substitutions)
+        cls.__applySubstitution(rightAtoms, substitutions)
 
-        print(f"  Резольвента: {Disjunct(result)}\n")
+        print(f"  Резольвента: {Disjunct(leftAtoms + rightAtoms)}\n")
 
         return True
 
@@ -127,11 +133,11 @@ class Unification:
         cls,
         leftAtom: Atom,
         rightAtom: Atom,
-        result: list[Atom],
+        atomList: list[Atom],
     ) -> None:
         substitutions = cls.__unificateAtoms(
             left=leftAtom.copy(), 
             right=rightAtom.copy()
         )
         if substitutions != None and len(substitutions) == 0:
-            result.remove(rightAtom)
+            atomList.remove(rightAtom)
