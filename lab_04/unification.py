@@ -19,17 +19,22 @@ class Unification:
 
             for leftAtom in leftAtoms:
                 for rightAtom in rightAtoms:
-                    if leftAtom.name == rightAtom.name and \
-                        leftAtom.isPositive != rightAtom.isPositive:
-                        cls.__tryToUnificateAtoms(
+                    if leftAtom.name == rightAtom.name:
+                        if leftAtom.isPositive == rightAtom.isPositive:
+                            cls.__deleteIdenticalAtom(
+                                leftAtom=leftAtom,
+                                rightAtom=rightAtom,
+                                atomList=rightAtoms,
+                            )
+                        elif cls.__tryToUnificateAtoms(
                             leftAtom=leftAtom,
                             rightAtom=rightAtom,
                             leftAtoms=leftAtoms,
                             rightAtoms=rightAtoms,
                             globalSubstitutions=globalSubstitutions,
-                        )
-                        localUnificationCount += 1
-                        break
+                        ):
+                            localUnificationCount += 1
+                            break
                             
             if localUnificationCount == 0:
                 break
@@ -122,3 +127,17 @@ class Unification:
                     
                     if substitution_term.type == "const":
                         term.value = substitution_term.value
+
+    @classmethod
+    def __deleteIdenticalAtom(
+        cls,
+        leftAtom: Atom,
+        rightAtom: Atom,
+        atomList: list[Atom],
+    ) -> None:
+        substitutions = cls.__unificateAtoms(
+            left=leftAtom.copy(), 
+            right=rightAtom.copy()
+        )
+        if substitutions != None and len(substitutions) == 0:
+            atomList.remove(rightAtom)
