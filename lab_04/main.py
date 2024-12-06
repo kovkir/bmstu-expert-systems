@@ -1,9 +1,13 @@
 from items import Disjunct
 from unification import Unification
-from utils import parse_disjunct
+from utils import create_disjunct
 
 
-def resolve(resolving: Disjunct, knowleadge: list[Disjunct], max_counter = 1000):
+def resolve(
+    resolving: Disjunct, 
+    knowleadge: list[Disjunct], 
+    max_counter = 1000
+) -> Disjunct:
     resolving_flag = True
     while resolving_flag and max_counter > 0:
         resolving_flag = False
@@ -24,37 +28,41 @@ def resolve(resolving: Disjunct, knowleadge: list[Disjunct], max_counter = 1000)
             print(f"Резольвента: {result[0]}\n")
 
             resolving = result[0]
-            resolving_flag = True
+            if len(resolving.args) != 0:
+                resolving_flag = True
+
             max_counter -= 1
             break
-        
-        if len(resolving.args) == 0:
-            break
-        
+
     if max_counter == 0:
         print("Превышено максимальное число итераций\n")
 
     return resolving
 
 
-def get_knowleadge(): 
-    return [
-        parse_disjunct(" P2(x1, y1)|  P5(w1) | ~P6(z1)"),
-        parse_disjunct(" P3(C)     | ~P4(z1) |  P1(x1, y1, z1)"),
-        parse_disjunct("~P2(A, B)  |  P5(w2) |  P6(z2)"),
-        parse_disjunct(" P4(z2)    | ~P3(z2)"),
+def get_knowleadge() -> list[Disjunct]: 
+    knowleadge = [
+        " P2(x1, y1)|  P5(z1) | ~P6(w1)",
+        " P3(C)     | ~P4(z2) |  P1(x2, y2, z2)",
+        "~P2(A, B)  |  P5(x3) |  P6(y3)",
+        " P4(x4)    | ~P3(x4)",
     ]
+    return [create_disjunct(item) for item in knowleadge]
 
 
 def main() -> None:
-    print("\nБаза знаний:\n", *get_knowleadge(), "", sep="\n")
+    """
+    Процедура резолюции с унификацией 
+    """
+    print(
+        "\nБаза знаний:\n", *get_knowleadge(), "", sep="\n",
+    )
     result = resolve(
-        resolving=parse_disjunct("~P1(A, B, C)"),
-        # resolving=parse_disjunct("P2(x1, y1)"),
+        resolving=create_disjunct("~P1(A, B, C)"),
         knowleadge=get_knowleadge(),
     )
     print("-" * 64, "\n")
-    print(f"Итоговая резольвента: {result}\n")
+    print(f"Рузультат резолюции: {result}\n")
 
 
 if __name__ == "__main__":

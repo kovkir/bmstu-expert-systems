@@ -1,7 +1,7 @@
 from items import Term, Atom, Disjunct
 
 
-def parse_disjunct(exp: str):
+def create_disjunct(exp: str) -> Disjunct:
     atoms = [atom.strip() for atom in exp.split("|")]
     atom_list = []
     

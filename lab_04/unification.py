@@ -3,7 +3,11 @@ from items import Atom, Disjunct, Term
 
 class Unification:
     @classmethod
-    def unificateDisjunct(cls, left: Disjunct, right: Disjunct):
+    def unificateDisjunct(
+        cls, 
+        left: Disjunct, 
+        right: Disjunct
+    ) -> tuple[Disjunct, dict[str, Term]] | None:
         unificationCount = 0
         result = left.copy().args + right.copy().args
         globalSubstitutions = {}
@@ -52,8 +56,8 @@ class Unification:
             right=rightAtom.copy(),
         )
         print(
-            f" \tУнификация предикатов:\n\t  {leftAtom}\n\t  {rightAtom}\n\n"\
-            f" \tПолученные подстановки: {substitutions}"
+            f"  Унификация предикатов:\n    {leftAtom}\n    {rightAtom}\n\n"\
+            f"  Полученные подстановки: {substitutions}"
         )
         if substitutions == None:
             return False
@@ -66,15 +70,17 @@ class Unification:
 
         cls.__applySubstitution(result, substitutions)
 
-        print(f" \tРезольвента: {Disjunct(result)}\n")
+        print(f"  Резольвента: {Disjunct(result)}\n")
 
         return True
 
     @classmethod
-    def __unificateAtoms(cls, left: Atom, right: Atom):
-        if left.name != right.name:
-            return
-        if len(left.args) != len(right.args):
+    def __unificateAtoms(
+        cls, 
+        left: Atom, 
+        right: Atom,
+    ) -> dict[str, Term] | None:
+        if left.name != right.name or len(left.args) != len(right.args):
             return
         
         substitions = {}
@@ -96,7 +102,7 @@ class Unification:
             elif leftTerm.type == "var" and rightTerm.type == "var":
                 if leftTerm.name != rightTerm.name:
                     substitions[leftTerm.name] = rightTerm
-
+                    
         return substitions
     
     @classmethod
@@ -104,7 +110,7 @@ class Unification:
         cls, 
         atomsList: list[Atom], 
         substitutions: dict[str, Term],
-    ):
+    ) -> None:
         for atom in atomsList:
             for term in atom.args:
                 if term.name in substitutions:
