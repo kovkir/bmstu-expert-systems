@@ -13,37 +13,22 @@ class Unification:
 
             for i, leftAtom in enumerate(result):
                 for rightAtom in result[i + 1:]:
-                    # Унификация возможна, только если имена атомов совпадают
                     if leftAtom.name == rightAtom.name:
                         if leftAtom.isPositive == rightAtom.isPositive:
-                            substitutions = cls.__unificateAtoms(
-                                left=leftAtom.copy(), 
-                                right=rightAtom.copy()
+                            cls.__deleteIdenticalAtom(
+                                leftAtom=leftAtom,
+                                rightAtom=rightAtom,
+                                result=result,
                             )
-                            # print(leftAtom, rightAtom, substitutions)
-                            if substitutions != None and len(substitutions) == 0:
-                                result.remove(rightAtom)
-                                # localUnificationCount += 1
-                            continue
-
-                        substitutions = cls.__unificateAtoms(
-                            left=leftAtom.copy(), 
-                            right=rightAtom.copy()
-                        )
-                        if substitutions == None:
-                            continue
-                        
-                        result.remove(leftAtom)
-                        result.remove(rightAtom)
-                        
-                        for sub in substitutions:
-                            globalSubstitutions[sub] = substitutions[sub]
-
-                        cls.__applySubstitution(result, substitutions)
-
-                        localUnificationCount += 1
-                        break
-            
+                        elif cls.__tryToUnificateAtoms(
+                            leftAtom=leftAtom,
+                            rightAtom=rightAtom,
+                            result=result,
+                            globalSubstitutions=globalSubstitutions,
+                        ):
+                            localUnificationCount += 1
+                            break
+                            
             if localUnificationCount == 0:
                 break
 
@@ -53,6 +38,37 @@ class Unification:
             return None
 
         return Disjunct(result), globalSubstitutions
+
+    @classmethod
+    def __tryToUnificateAtoms(
+        cls, 
+        leftAtom: Atom,
+        rightAtom: Atom,
+        result: list[Atom],
+        globalSubstitutions: dict[str, Term],
+    ) -> bool:
+        substitutions = cls.__unificateAtoms(
+            left=leftAtom.copy(),
+            right=rightAtom.copy(),
+        )
+        print(
+            f" \tУнификация предикатов:\n\t  {leftAtom}\n\t  {rightAtom}\n\n"\
+            f" \tПолученные подстановки: {substitutions}"
+        )
+        if substitutions == None:
+            return False
+
+        result.remove(leftAtom)
+        result.remove(rightAtom)
+        
+        for sub in substitutions:
+            globalSubstitutions[sub] = substitutions[sub]
+
+        cls.__applySubstitution(result, substitutions)
+
+        print(f" \tРезольвента: {Disjunct(result)}\n")
+
+        return True
 
     @classmethod
     def __unificateAtoms(cls, left: Atom, right: Atom):
@@ -80,8 +96,6 @@ class Unification:
             elif leftTerm.type == "var" and rightTerm.type == "var":
                 if leftTerm.name != rightTerm.name:
                     substitions[leftTerm.name] = rightTerm
-            else:
-                print("Ошибка\n")
 
         return substitions
     
@@ -89,7 +103,7 @@ class Unification:
     def __applySubstitution(
         cls, 
         atomsList: list[Atom], 
-        substitutions: dict[str, Term]
+        substitutions: dict[str, Term],
     ):
         for atom in atomsList:
             for term in atom.args:
@@ -101,3 +115,17 @@ class Unification:
                     
                     if substitution_term.type == "const":
                         term.value = substitution_term.value
+
+    @classmethod
+    def __deleteIdenticalAtom(
+        cls,
+        leftAtom: Atom,
+        rightAtom: Atom,
+        result: list[Atom],
+    ) -> None:
+        substitutions = cls.__unificateAtoms(
+            left=leftAtom.copy(), 
+            right=rightAtom.copy()
+        )
+        if substitutions != None and len(substitutions) == 0:
+            result.remove(rightAtom)

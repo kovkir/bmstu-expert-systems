@@ -1,93 +1,61 @@
-from items import Term, Atom, Disjunct
+from items import Disjunct
 from unification import Unification
-
-
-def parse_disjunct(exp: str):
-    atoms = [atom.strip() for atom in exp.split("|")]
-    atom_list = []
-    
-    for atom in atoms:
-        isPositive = atom[0] != '~'
-        
-        if not isPositive:
-            atom = atom[1:].strip()
-
-        atom_name, atom_args = atom.split('(')
-
-        atom_name = atom_name.strip()
-        atom_args = atom_args.split(')')[0].strip()
-
-        atom_terms = [term.strip() for term in atom_args.split(',')]
-
-        terms = [
-            Term(
-                name=term, 
-                type="const" if term[0].capitalize() == term[0] else "var"
-            ) for term in atom_terms        
-        ]
-        
-        atom_list.append(Atom(atom_name, terms, isPositive))
-    
-    return Disjunct(atom_list)
+from utils import parse_disjunct
 
 
 def resolve(resolving: Disjunct, knowleadge: list[Disjunct], max_counter = 1000):
-    resolvingCount = 1
-    while resolvingCount > 0 and max_counter > 0:
-        resolvingCount = 0
+    resolving_flag = True
+    while resolving_flag and max_counter > 0:
+        resolving_flag = False
 
         for rule in knowleadge:
+            print("-" * 64, "\n")
+            print(f"Пара дизъюнктов:\n  1) {resolving}\n  2) {rule}\n")
+            
             result = Unification.unificateDisjunct(
                 left=resolving.copy(), 
-                right=rule.copy()
+                right=rule.copy(),
             )
             if result == None:
+                print(f"Отсутствие унификаций\n")
                 continue
-
-            print(f"{resolving} ~~~ {rule} ==== ({result[1]})\n ==> {result[0]}\n")
+            
+            print(f"Подстановки: {result[1]}")
+            print(f"Резольвента: {result[0]}\n")
 
             resolving = result[0]
-            resolvingCount += 1
+            resolving_flag = True
             max_counter -= 1
             break
         
-    if resolvingCount > 0:
-        print("Tries out")
+        if len(resolving.args) == 0:
+            break
+        
+    if max_counter == 0:
+        print("Превышено максимальное число итераций\n")
 
     return resolving
 
 
 def get_knowleadge(): 
     return [
-        parse_disjunct("L(Петя, Снег)"),
-        parse_disjunct("L(Петя, Дождь)"),
-        
-        parse_disjunct("S(x1) | ~M(x1)"),
-        parse_disjunct("S(x2) | M(x2)"),
-        parse_disjunct("~M(x3) | ~L(x3, Дождь)"),
-        parse_disjunct("~S(x4) | L(x4, Снег)"),
-        parse_disjunct("~L(Лена, y1) | ~L(Петя, y1)"),
-        parse_disjunct("~L(Лена, y2) | L(Петя, y2)"), 
+        parse_disjunct(" P2(x1, y1)|  P5(w1) | ~P6(z1)"),
+        parse_disjunct(" P3(C)     | ~P4(z1) |  P1(x1, y1, z1)"),
+        parse_disjunct("~P2(A, B)  |  P5(w2) |  P6(z2)"),
+        parse_disjunct(" P4(z2)    | ~P3(z2)"),
     ]
 
 
 def main() -> None:
-    print(parse_disjunct('S(x4) | ~M(K)'), "\n")
+    print("\nБаза знаний:\n", *get_knowleadge(), "", sep="\n")
+    result = resolve(
+        resolving=parse_disjunct("~P1(A, B, C)"),
+        # resolving=parse_disjunct("P2(x1, y1)"),
+        knowleadge=get_knowleadge(),
+    )
+    print("-" * 64, "\n")
+    print(f"Итоговая резольвента: {result}\n")
 
-    leftDisjunct = parse_disjunct("S(x1) | ~M(x1)")
-    rightDisjunct = parse_disjunct("S(x2) | M(x2)")
-
-    print(Unification.unificateDisjunct(
-        left=leftDisjunct, 
-        right=rightDisjunct
-    ))
-
-    print(*get_knowleadge(), "\n", sep="\n")
-    print(resolve(
-        resolving=parse_disjunct("L(Лена, Снег) | ~L(Лена, Футбол)"), 
-        knowleadge=get_knowleadge()
-    ))
-    
 
 if __name__ == "__main__":
     main()
