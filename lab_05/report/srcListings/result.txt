@@ -1,0 +1,112 @@
+Текущее правило:
+  W(y:var) & A(x:var) & S(x:var, y:var, z:var) & H(z:var) -> C(x:var)
+
+База фактов (закрытые вершины): 
+  O(N:const, M:const)
+  M(M:const)
+  A(W:const)
+  E(N:const, A:const)
+
+Список открытых правил: 
+  W(y:var) & A(x:var) & S(x:var, y:var, z:var) & H(z:var) -> C(x:var)
+  M(x_1:var) & O(N:const, x_1:var) -> S(W:const, x_1:var, N:const)
+  M(x_2:var) -> W(x_2:var)
+  E(x_3:var, A:const) -> H(x_3:var)
+
+Список доказанных правил: 
+
+=> Пусто
+
+----------------------------------------------------------------
+
+Текущее правило:
+  M(x_1:var) & O(N:const, x_1:var) -> S(W:const, x_1:var, N:const)
+
+База фактов (закрытые вершины): 
+  O(N:const, M:const)
+  M(M:const)
+  A(W:const)
+  E(N:const, A:const)
+
+Список открытых правил: 
+  W(y:var) & A(x:var) & S(x:var, y:var, z:var) & H(z:var) -> C(x:var)
+  M(x_1:var) & O(N:const, x_1:var) -> S(W:const, x_1:var, N:const)
+  M(x_2:var) -> W(x_2:var)
+  E(x_3:var, A:const) -> H(x_3:var)
+
+Список доказанных правил: 
+
+=> S(W:const, M:const, N:const) с подстановкой {'x_1': M:const}
+
+----------------------------------------------------------------
+
+Текущее правило:
+  M(x_2:var) -> W(x_2:var)
+
+База фактов (закрытые вершины): 
+  O(N:const, M:const)
+  M(M:const)
+  A(W:const)
+  E(N:const, A:const)
+  S(W:const, M:const, N:const)
+
+Список открытых правил: 
+  W(y:var) & A(x:var) & S(x:var, y:var, z:var) & H(z:var) -> C(x:var)
+  M(x_2:var) -> W(x_2:var)
+  E(x_3:var, A:const) -> H(x_3:var)
+
+Список доказанных правил: 
+  M(x_1:var) & O(N:const, x_1:var) -> S(W:const, x_1:var, N:const)
+
+=> W(M:const) с подстановкой {'x_2': M:const}
+
+----------------------------------------------------------------
+
+Текущее правило:
+  E(x_3:var, A:const) -> H(x_3:var)
+
+База фактов (закрытые вершины): 
+  O(N:const, M:const)
+  M(M:const)
+  A(W:const)
+  E(N:const, A:const)
+  S(W:const, M:const, N:const)
+  W(M:const)
+
+Список открытых правил: 
+  W(y:var) & A(x:var) & S(x:var, y:var, z:var) & H(z:var) -> C(x:var)
+  E(x_3:var, A:const) -> H(x_3:var)
+
+Список доказанных правил: 
+  M(x_1:var) & O(N:const, x_1:var) -> S(W:const, x_1:var, N:const)
+  M(x_2:var) -> W(x_2:var)
+
+=> H(N:const) с подстановкой {'x_3': N:const}
+
+----------------------------------------------------------------
+
+Текущее правило:
+  W(y:var) & A(x:var) & S(x:var, y:var, z:var) & H(z:var) -> C(x:var)
+
+База фактов (закрытые вершины): 
+  O(N:const, M:const)
+  M(M:const)
+  A(W:const)
+  E(N:const, A:const)
+  S(W:const, M:const, N:const)
+  W(M:const)
+  H(N:const)
+
+Список открытых правил: 
+  W(y:var) & A(x:var) & S(x:var, y:var, z:var) & H(z:var) -> C(x:var)
+
+Список доказанных правил: 
+  M(x_1:var) & O(N:const, x_1:var) -> S(W:const, x_1:var, N:const)
+  M(x_2:var) -> W(x_2:var)
+  E(x_3:var, A:const) -> H(x_3:var)
+
+=> C(W:const) с подстановкой {'y': M:const, 'x': W:const, 'z': N:const}
+
+----------------------------------------------------------------
+
+Цель успешно доказана
