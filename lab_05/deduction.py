@@ -11,10 +11,13 @@ class DirectDeduction():
         open_rules = self.knowleadge.open_rules
         close_rules = self.knowleadge.close_rules
         
+        solution_flag = False
+        no_solution_flag = False
+        
         if self.__is_proved(facts.args, goal):
             return True
 
-        while True:
+        while not solution_flag or not no_solution_flag:
             close_rules_count = 0
             
             i = 0
@@ -31,14 +34,15 @@ class DirectDeduction():
                     close_rules_count += 1
 
                     if self.__is_proved(new_fact.args, goal):
-                        return True
+                        solution_flag = True
+                        break
                 else:
                     i += 1
 
             if close_rules_count == 0:
-                break
+                no_solution_flag = True
 
-        return False
+        return solution_flag
     
     def __try_to_prove_rule(
         self, 
@@ -97,9 +101,11 @@ class DirectDeduction():
     
     def __is_proved(self, atoms: list[Atom], goal: Atom) -> bool:
         for atom in atoms:
-            if atom.isPositive != goal.isPositive or \
+            if (
+                atom.isPositive != goal.isPositive or \
                 atom.name != goal.name or \
-                not self.__equal_types(atom, goal):
+                not self.__equal_types(atom, goal)
+            ):
                 continue
 
             if unificate_atoms(atom, goal) != None:
